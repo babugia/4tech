@@ -37,6 +37,45 @@ app.post('/vagas', async (req, res) => {
     }
 })
 
+app.put('/vagas/:id', async (req, res) => {
+    var id = req.params.id;
+
+    try{
+
+        if(!req.body){
+            return res.status(403).send('Nenhuma vaga veio');
+        }
+        let index = await vagas.findIndex(vaga => vaga.id === id);
+        if(index >= 0) { 
+            Object.keys(req.body).forEach(vaga => {
+                vagas[index][vaga] = req.body[vaga]
+            })
+            return res.send('Vaga com o id '+id+' alterada com sucesso');
+        }
+        return res.send('Nao foi encontrado vaga com esse id');
+    }catch(error) {
+        return res.status(500).send(error);
+    }
+
+})
+
+app.delete('/vagas/:id', async (req, res) => {
+    var id = req.params.id;
+    try{
+        let vagasLength = vagas.length;
+        var vaga = vagas.find(vagas => vagas.id === id);
+
+        var index = vagas.indexOf(vaga);
+        if (index > -1) {
+            vagas.splice(index, 1);
+            if(vagas.length < vagasLength) return res.send('Removed');
+        }
+        
+    }catch(error) {
+
+    }
+})
+
 app.listen(port, () => {
     console.log('Server listening on port ' +port);
 })
